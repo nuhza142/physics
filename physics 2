@@ -1,0 +1,101 @@
+
+//1
+
+
+#include <stdio.h>
+#include <math.h>
+
+double calculate_diffraction_angle(double wavelength_nm, double slit_width_um) {
+    double wavelength_m = wavelength_nm * 1e-9;
+    double slit_width_m = slit_width_um * 1e-6;
+    double sin_theta = wavelength_m / slit_width_m;
+
+    if (sin_theta > 1.0 || sin_theta < -1.0) {
+        return NAN;
+    }
+
+    double theta_rad = asin(sin_theta);
+    return theta_rad * 180.0 / M_PI;
+}
+
+int main() {
+    double wavelength_nm;
+    double a_values[3];
+    double angles[3];
+    double max_angle = -1.0;
+    double max_a = 0.0;
+    int i;
+
+    while (1) {
+        printf("Enter the wavelength (380-750 nm): ");
+        if (scanf("%lf", &wavelength_nm) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        if (wavelength_nm >= 380 && wavelength_nm <= 750) {
+            break;
+        } else {
+            printf("Out of range. Please enter a valid number.\n");
+        }
+    }
+
+    for (i = 0; i < 3; i++) {
+        while (1) {
+            printf("Enter slit width a%d (µm): ", i + 1);
+            if (scanf("%lf", &a_values[i]) != 1) {
+                printf("Invalid input. Please enter a number.\n");
+                while (getchar() != '\n');
+                continue;
+            }
+            break;
+        }
+    }
+
+    for (i = 0; i < 3; i++) {
+        angles[i] = calculate_diffraction_angle(wavelength_nm, a_values[i]);
+        if (!isnan(angles[i]) && angles[i] > max_angle) {
+            max_angle = angles[i];
+            max_a = a_values[i];
+        }
+    }
+
+    if (max_angle != -1.0) {
+        printf("The slit with width %.2lf µm bent the light the most, with an angle of %.2lf degrees.\n", max_a, max_angle);
+    } else {
+        printf("Invalid slit width(s) provided. No valid diffraction angle could be calculated.\n");
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+   //2
+
+
+
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    double lambda_green = 530e-9;
+    double theta_green = 65.0 * M_PI / 180.0;
+    int m_green = 3;
+
+    double lambda_red = 700e-9;
+    int m_red = 2;
+
+    double d = (m_green * lambda_green) / sin(theta_green);
+    double theta_red = asin((m_red * lambda_red) / d) * 180.0 / M_PI;
+
+    printf("The angle for the second-order bright spot for red light is: %.2lf degrees\n", theta_red);
+
+    return 0;
+}
+
